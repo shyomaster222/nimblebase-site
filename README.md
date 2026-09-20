@@ -8,7 +8,7 @@ Astro static site, 19 routes. Live at https://nimblebasehq.com.
 
 ## Hosting
 
-GitHub Pages from the public repo `shyomaster222/nimblebase-site`. Every push to `main` runs `.github/workflows/deploy.yml`, which builds with Astro and deploys. `public/CNAME` holds the custom domain. DNS is at iwantmyname: four GitHub Pages A records on `@`, `www` CNAME to `shyomaster222.github.io`, Zoho MX records and SPF for mail.
+GitHub Pages from the public repo `shyomaster222/nimblebase-site`. Every push to `main` runs `.github/workflows/deploy.yml`, which builds with Astro and deploys. `public/CNAME` holds the custom domain. DNS is at iwantmyname: four GitHub Pages A records on `@`, `www` CNAME to `shyomaster222.github.io`, Forward Email MX records (free forwarding of hello@ to the founder's inbox) and SPF.
 
 ## Pages
 
@@ -42,5 +42,5 @@ All service copy, the week rhythm, engagement options and FAQs live in `src/data
 - Fill every `[bracketed]` fact. They render with a dashed outline so they can't ship unnoticed. Current list: sprint, project and monthly prices; monthly day allocation; minimum monthly ad spend; invoicing terms; preferred stack; location and working hours; founder and team names, roles, bios, photos; and on the legal pages the legal entity, registered address, jurisdiction, hosting, form and email providers, retention period, response period, liability wording, last-updated date. `grep -rn "\[" src/data src/pages` finds them.
 - Legal pages are filled with the company facts (Nimblebase LLC, Sheridan WY address, Wyoming law) and only need the phone number; flip `legalReady` to true and remove them from `hidden` in `astro.config.mjs` once a lawyer has looked them over.
 - Article dates are placeholders from the build week. Set real publish dates, and name authors if you want bylines beyond "The Nimblebase team".
-- Finish email: sign up for Zoho Mail (free plan) with nimblebasehq.com, add Zoho's verification TXT and DKIM records at iwantmyname, create hello@nimblebasehq.com. If wanted, set a form endpoint in `src/data/site.ts`; with no endpoint the contact form opens the visitor's email app.
+- Email: hello@nimblebasehq.com forwards via Forward Email (free, DNS-only, receive-only) to the founder's inbox; the target is the `forward-email=` TXT record at iwantmyname. To send as hello@, move to Google Workspace or Forward Email's paid plan. If wanted, set a form endpoint in `src/data/site.ts`; with no endpoint the contact form opens the visitor's email app.
 - Add real proof (results, client names, testimonials) in the marked proof slot on the home page. None is invented here, and there is no case-study section by choice.
