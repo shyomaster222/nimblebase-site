@@ -7,8 +7,8 @@ export const site = {
   // Replace the placeholders with the real domain, business email, US address and phone.
   domain: 'nimblebasehq.com',
   email: 'hello@nimblebasehq.com',
-  phone: '+1-000-000-0000',
-  phoneDisplay: '[US PHONE NUMBER]',
+  phone: '+1-814-801-3627',
+  phoneDisplay: '+1 (814) 801-3627',
   // Principal office on the Wyoming Secretary of State record (filing 2026-002033751).
   address: {
     street: '30 N Gould St Ste N',
@@ -40,7 +40,7 @@ export const site = {
     { href: '/terms/', label: 'Terms' },
   ],
   // Legal pages stay out of search and the sitemap until the bracketed company facts are filled and reviewed.
-  legalReady: false,
+  legalReady: true,
   legalEntity: 'Nimblebase LLC',
   legalAddress: '30 N Gould St Ste N, Sheridan, WY 82801, USA',
   jurisdiction: 'the State of Wyoming',
