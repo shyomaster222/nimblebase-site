@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+---
+
+<Base title="Page not found" description="That page doesn't exist on Nimblebase." noindex>
+  <PageHero title="That page isn't here." lede="The link may be old, or the address has a typo. The home page has everything we do.">
+    <div class="cta-row">
+      <a class="btn" href="/">Go to the home page</a>
+      <a class="btn btn-quiet" href="/services/">See services</a>
+    </div>
+  </PageHero>
+</Base>

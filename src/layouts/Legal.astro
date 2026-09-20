@@ -1,0 +1,72 @@
+---
+import Base from './Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  lede: string;
+}
+const { title, description, lede } = Astro.props;
+---
+
+<Base title={title} description={description} noindex={!site.legalReady}>
+  <PageHero title={title} lede={lede} crumbs={[{ label: title }]} />
+  <section class="band">
+    <div class="wrap">
+      {
+        !site.legalReady && (
+          <p class="notice">
+            Template. The facts in [brackets] need filling in, and the whole page needs a lawyer's review before launch.
+            Until then this page is hidden from search engines and the sitemap.
+          </p>
+        )
+      }
+      <div class="prose">
+        <p class="updated">Last updated: {site.legalUpdated}</p>
+        <slot />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notice {
+    max-width: 68ch;
+    margin-bottom: 2.5rem;
+    padding: 1rem 1.25rem;
+    border: 2px dashed var(--forest);
+    border-radius: 0.75rem;
+    font-weight: 500;
+  }
+  .prose {
+    max-width: 68ch;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+  .updated {
+    color: var(--forest-soft);
+    font-size: 1rem;
+  }
+  .prose :global(h2) {
+    font-size: var(--t-lg);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 2.2em 0 0.6em;
+  }
+  .prose :global(p),
+  .prose :global(ul) {
+    margin: 0 0 1.2em;
+    max-width: none;
+  }
+  .prose :global(ul) {
+    padding-left: 1.3em;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.4em;
+  }
+  .prose :global(a) {
+    color: var(--leaf-dark);
+  }
+</style>

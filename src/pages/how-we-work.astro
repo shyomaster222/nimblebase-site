@@ -1,0 +1,202 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Closing from '../components/Closing.astro';
+import { weekRhythm } from '../data/site';
+
+const fridayNote = [
+  { h: 'What went live', t: 'Links to the real thing: the campaign, the page, the staging build, the working automation.' },
+  { h: 'What we learned', t: 'Numbers where we have them, and a plain account of anything that went wrong.' },
+  { h: "What's next", t: "Our suggestion for next week's Friday. You can change it on Monday." },
+];
+
+const rules = [
+  { h: 'You talk to the people doing the work.', t: "There's no account manager relaying messages. Questions get answered the same day by the person who knows the answer." },
+  { h: 'Everything sits in your accounts.', t: 'Ad accounts, repositories, cloud hosting, documents. If we part ways, you keep all of it without asking.' },
+  { h: 'Scope is written in one paragraph.', t: "Each Monday we write down what ships on Friday. If it won't fit in a paragraph, it won't fit in a week." },
+  { h: "We say when we're the wrong team.", t: "Some jobs need a specialist we don't have. You'll hear that from us before you pay for it." },
+];
+---
+
+<Base
+  title="How we work"
+  description="Nimblebase works in one-week cycles: plan on Monday, build midweek, ship on Friday. See what a week looks like, what the Friday note contains and the three ways to start."
+>
+  <PageHero
+    title="Plan on Monday, ship on Friday, every week."
+    lede="You see finished work every week, so a wrong turn costs you days."
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>The week</h2>
+      </div>
+      <ol class="week">
+        {
+          weekRhythm.map((d) => (
+            <li class:list={{ ship: d.title === 'Ship' }}>
+              <p class="day">{d.day}</p>
+              <h3>{d.title}</h3>
+              <p>{d.detail}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="band band-mint">
+    <div class="wrap two">
+      <div class="band-head">
+        <h2>The Friday note</h2>
+        <p class="lede">One page, every week, written by the person who did the work. It has three parts.</p>
+      </div>
+      <ol class="note">
+        {
+          fridayNote.map((n) => (
+            <li>
+              <h3>{n.h}</h3>
+              <p>{n.t}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>Four rules we keep</h2>
+      </div>
+      <ul class="rules">
+        {
+          rules.map((r) => (
+            <li>
+              <h3>{r.h}</h3>
+              <p>{r.t}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-forest">
+    <div class="wrap start">
+      <h2>Start with two weeks.</h2>
+      <p class="lede">
+        A sprint is one problem, fixed scope and fixed price. Longer projects and a monthly team are there when you
+        want them.
+      </p>
+      <a class="btn" href="/#start">See the three ways to start</a>
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .week {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1.3fr 1.7fr 1.3fr;
+    border-top: 4px solid var(--forest);
+  }
+  .week li {
+    padding: 1.5rem 1.5rem 1.5rem 0;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .week li + li {
+    border-left: 2px solid var(--forest);
+    padding-left: 1.5rem;
+  }
+  .week .day {
+    font-weight: 600;
+    color: var(--forest-soft);
+  }
+  .week .ship {
+    background: var(--lime);
+    border-radius: 0 0 var(--r-panel) 0;
+  }
+  .week .ship .day {
+    color: var(--forest);
+  }
+
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .two .band-head {
+    margin-bottom: 0;
+  }
+  .note {
+    margin: 0;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    list-style: none;
+    background: var(--white);
+    border-radius: var(--r-panel);
+    display: grid;
+    gap: 1.5rem;
+  }
+  .note li {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .note li + li {
+    border-top: 1.5px solid var(--mint-deep);
+    padding-top: 1.5rem;
+  }
+
+  .rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(2rem, 6vw, 5rem);
+  }
+  .rules li {
+    border-top: 2px solid var(--forest);
+    padding-block: 1.5rem 2.5rem;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .rules p {
+    color: var(--forest-soft);
+  }
+
+  .start {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  @media (max-width: 52rem) {
+    .week,
+    .two,
+    .rules {
+      grid-template-columns: 1fr;
+    }
+    .week {
+      border-top: 0;
+      border-left: 4px solid var(--forest);
+    }
+    .week li,
+    .week li + li {
+      border-left: 0;
+      padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+    }
+    .week .ship {
+      border-radius: 0 var(--r-panel) var(--r-panel) 0;
+    }
+  }
+</style>

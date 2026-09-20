@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import PostList from '../../components/PostList.astro';
+import Closing from '../../components/Closing.astro';
+import { getPosts } from '../../data/insights';
+
+const posts = await getPosts();
+---
+
+<Base
+  title="Insights"
+  description="Practical notes from the Nimblebase team on marketing measurement, picking AI projects and running work in one-week cycles."
+>
+  <PageHero
+    title="Notes from the work"
+    lede="Short, practical pieces on the things we do every week. Written to be used, whether or not you hire us."
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <PostList posts={posts} />
+      <p class="feed">Prefer a reader? <a href="/rss.xml">Subscribe by RSS</a>.</p>
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .feed {
+    margin-top: 2rem;
+    color: var(--forest-soft);
+  }
+</style>

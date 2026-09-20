@@ -1,0 +1,175 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import Closing from '../components/Closing.astro';
+import { waysToStart, billing, faqGroups } from '../data/site';
+
+const pricingFaqs = faqGroups.find((g) => g.title === 'Pricing')?.items ?? [];
+---
+
+<Base
+  title="Pricing"
+  description="Three ways to work with Nimblebase: a two-week sprint, a fixed-price project, or a monthly team. Every price is agreed before work starts."
+>
+  <PageHero
+    title="Priced up front, every time."
+    lede="Three ways to work with us. You'll know the cost before any work starts, and you can leave whenever it stops being worth it."
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <ul class="plans">
+        {
+          waysToStart.map((w, i) => (
+            <li class:list={{ first: i === 0 }}>
+              <p class="length">{w.length}</p>
+              <h2>{w.name}</h2>
+              <p class="todo">{w.price}</p>
+              <p class="best">
+                <span>Best for</span>
+                {w.bestFor}
+              </p>
+              <ul class="includes">
+                {w.includes.map((line) => <li>{line}</li>)}
+              </ul>
+              {i === 0 && <p class="start">Start here if you're unsure.</p>}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-mint">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>How billing works</h2>
+      </div>
+      <ul class="billing">
+        {
+          billing.map((b) => (
+            <li>
+              <h3>{b.h}</h3>
+              <p>{b.t}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <h2>Questions about price</h2>
+      <div>
+        <Faq items={pricingFaqs} />
+        <p class="more"><a href="/faq/">Read all questions</a></p>
+      </div>
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .plans {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+  .plans > li {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    justify-items: start;
+    padding: clamp(1.5rem, 2.5vw, 2.25rem);
+    border-radius: var(--r-panel);
+    border: 2px solid var(--forest);
+  }
+  .plans > li.first {
+    background: var(--forest);
+    color: var(--white);
+  }
+  .length {
+    font-weight: 600;
+    color: var(--forest-soft);
+  }
+  .first .length {
+    color: var(--lime);
+  }
+  .plans h2 {
+    font-size: var(--t-xl);
+  }
+  .best span {
+    display: block;
+    font-weight: 600;
+  }
+  .includes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  .includes li {
+    border-top: 1.5px solid var(--mint-deep);
+    padding-block: 0.8rem;
+    line-height: 1.45;
+  }
+  .first .includes li {
+    border-top-color: rgb(196 220 205 / 0.35);
+  }
+  .start {
+    font-family: var(--display);
+    font-weight: 600;
+    background: var(--lime);
+    color: var(--forest);
+    padding: 0.15rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  .billing {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(2rem, 6vw, 5rem);
+  }
+  .billing li {
+    border-top: 2px solid var(--forest);
+    padding-block: 1.5rem 2.5rem;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .billing p {
+    color: var(--forest-soft);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .split h2 {
+    font-size: var(--t-xl);
+  }
+  .more {
+    margin-top: 1.5rem;
+    font-family: var(--display);
+    font-weight: 600;
+  }
+  @media (max-width: 60rem) {
+    .plans,
+    .billing,
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

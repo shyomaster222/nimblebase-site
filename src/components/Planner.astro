@@ -1,0 +1,279 @@
+---
+// The hero's interactive moment: a four-Friday board. Each row is a service you can switch on or off,
+// each column is what goes live that Friday. Rows keep their height when off, so nothing jumps on desktop.
+// On small screens a row becomes a toggle with its four Fridays listed underneath.
+// Works without JS (the default rows render on); JS adds the toggling.
+import { services } from '../data/site';
+
+const defaultOn = ['marketing', 'ai-implementation', 'software'];
+const weeks = [1, 2, 3, 4];
+---
+
+<section class="planner" aria-labelledby="planner-title" data-planner>
+  <div class="planner-head">
+    <h2 id="planner-title">Plan your first 30 days</h2>
+    <p class="hint" id="planner-hint">Switch services on or off. Each column is what goes live that Friday.</p>
+  </div>
+
+  <div class="board" role="group" aria-describedby="planner-hint">
+    <div class="cols" aria-hidden="true">
+      <span></span>
+      {
+        weeks.map((w) => (
+          <p class="when">
+            <span class="fri">Friday</span> week {w}
+          </p>
+        ))
+      }
+    </div>
+
+    {
+      services.map((s) => {
+        const on = defaultOn.includes(s.id);
+        return (
+          <div class="row" data-service={s.id} data-on={on ? 'true' : 'false'}>
+            <button type="button" class="toggle" aria-pressed={on ? 'true' : 'false'}>
+              {s.short}
+            </button>
+            {s.weeks.map((text, i) => (
+              <p class="cell" style={`--w:${i}`}>
+                <span class="cell-when">
+                  <span class="fri">Friday</span> week {i + 1}
+                </span>
+                <span class="cell-text">{text}</span>
+              </p>
+            ))}
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <p class="empty" hidden>Switch on at least one service and your plan shows up here.</p>
+
+  <p class="plan-cta">
+    <a class="plan-link" href={`/contact/?need=${defaultOn.join(',')}`} data-plan-link>Book a call about this plan</a>
+  </p>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-planner]');
+  if (root) {
+    const rows = [...root.querySelectorAll<HTMLElement>('.row')];
+    const empty = root.querySelector<HTMLElement>('.empty')!;
+    const link = root.querySelector<HTMLAnchorElement>('[data-plan-link]')!;
+
+    const sync = () => {
+      const on = rows.filter((r) => r.dataset.on === 'true').map((r) => r.dataset.service!);
+      empty.hidden = on.length > 0;
+      link.hidden = on.length === 0;
+      link.href = `/contact/?need=${on.join(',')}`;
+    };
+
+    // On small screens the plan stacks, so start with one service open to keep the hero short.
+    if (window.matchMedia('(max-width: 60rem)').matches) {
+      rows.forEach((row, i) => {
+        row.dataset.on = String(i === 0);
+        row.querySelector('.toggle')!.setAttribute('aria-pressed', String(i === 0));
+      });
+      sync();
+    }
+
+    for (const row of rows) {
+      const btn = row.querySelector<HTMLButtonElement>('.toggle')!;
+      btn.addEventListener('click', () => {
+        const next = row.dataset.on !== 'true';
+        row.dataset.on = String(next);
+        btn.setAttribute('aria-pressed', String(next));
+        row.classList.toggle('is-new', next);
+        sync();
+      });
+    }
+  }
+</script>
+
+<style>
+  .planner {
+    background: var(--white);
+    border-radius: 1.75rem;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .planner-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 1.5rem;
+  }
+
+  h2 {
+    font-size: var(--t-lg);
+    letter-spacing: -0.02em;
+  }
+
+  .hint {
+    color: var(--forest-soft);
+    font-size: 1rem;
+  }
+
+  .board {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .cols,
+  .row {
+    display: grid;
+    grid-template-columns: 12.5rem repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .when,
+  .cell-when {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  .when {
+    padding: 0 0.25rem 0.25rem;
+  }
+  .fri {
+    background: var(--lime);
+    padding: 0.05rem 0.45rem;
+    border-radius: 5px;
+    margin-right: 0.25rem;
+  }
+
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 5.25rem;
+    padding: 0 1.1rem;
+    border-radius: 0.9rem;
+    border: 2px solid var(--forest);
+    background: var(--white);
+    color: var(--forest);
+    font: 600 1rem var(--display);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  /* The dot shows state without relying on colour alone. */
+  .toggle::before {
+    content: '';
+    flex: none;
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+  }
+  .toggle[aria-pressed='true'] {
+    background: var(--forest);
+    color: var(--white);
+  }
+  .toggle[aria-pressed='true']::before {
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+
+  .cell {
+    max-width: none;
+    min-height: 5.25rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    border: 1.5px solid var(--mint-soft);
+    background: var(--mint-soft);
+    font-size: 0.97rem;
+    line-height: 1.35;
+  }
+  .cell-when {
+    display: none;
+  }
+  .row[data-on='false'] .cell {
+    background: transparent;
+    border: 1.5px dashed var(--mint-deep);
+  }
+  .row[data-on='false'] .cell-text {
+    visibility: hidden;
+  }
+
+  /* One orchestrated moment: on load the plan lands week by week. Toggling a row replays it for that row. */
+  .row[data-on='true'] .cell {
+    animation: land 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+    animation-delay: calc(var(--w) * 110ms + 250ms);
+  }
+  .row.is-new[data-on='true'] .cell {
+    animation-delay: calc(var(--w) * 60ms);
+  }
+
+  .empty {
+    color: var(--forest-soft);
+  }
+
+  .plan-cta {
+    max-width: none;
+    text-align: right;
+  }
+  .plan-link {
+    font-family: var(--display);
+    font-weight: 600;
+    color: var(--leaf-dark);
+  }
+
+  @keyframes land {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Small screens: each service is a toggle with its four Fridays listed underneath. */
+  @media (max-width: 60rem) {
+    .cols {
+      display: none;
+    }
+    .row {
+      grid-template-columns: 1fr;
+    }
+    .toggle {
+      min-height: 3rem;
+      border-radius: var(--r-pill);
+      justify-self: start;
+      padding-right: 1.25rem;
+    }
+    .cell {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      padding: 0.6rem 0;
+      border: 0;
+      border-top: 1.5px solid var(--mint-deep);
+      border-radius: 0;
+      background: transparent;
+    }
+    .cell-when {
+      display: block;
+      white-space: nowrap;
+    }
+    .row[data-on='false'] .cell {
+      display: none;
+    }
+    .row + .row {
+      margin-top: 0.5rem;
+    }
+    .plan-cta {
+      text-align: left;
+    }
+  }
+</style>

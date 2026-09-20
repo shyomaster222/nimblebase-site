@@ -1,0 +1,250 @@
+@import '@fontsource-variable/funnel-display';
+@import '@fontsource-variable/funnel-sans';
+@import '@fontsource-variable/funnel-sans/wght-italic.css';
+
+/* Tokens */
+:root {
+  --mint: #dff5e6;
+  --mint-deep: #b5e3c4;
+  --mint-soft: #eef9f1;
+  --white: #ffffff;
+  --forest: #0e2f22;
+  --forest-soft: #3f5a4c;
+  --leaf: #14804a;
+  --leaf-dark: #0f6a3c;
+  --lime: #c6f26b;
+  --error: #b3261e;
+
+  --display: 'Funnel Display Variable', 'Avenir Next', 'Segoe UI', sans-serif;
+  --body: 'Funnel Sans Variable', 'Avenir Next', 'Segoe UI', sans-serif;
+
+  /* Type scale, ratio 1.25, fluid at the top end */
+  --t-sm: 0.875rem;
+  --t-base: 1.0625rem;
+  --t-md: 1.25rem;
+  --t-lg: clamp(1.4rem, 1.2rem + 0.9vw, 1.75rem);
+  --t-xl: clamp(1.9rem, 1.4rem + 2vw, 2.75rem);
+  --t-2xl: clamp(2.5rem, 1.6rem + 3.8vw, 4.25rem);
+  --t-3xl: clamp(2.9rem, 1.2rem + 7.6vw, 7.5rem);
+
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --max: 76rem;
+  --band: clamp(4rem, 9vw, 7.5rem);
+  --r-panel: 1.5rem;
+  --r-pill: 999px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--forest);
+  font-family: var(--body);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--display);
+  font-weight: 650;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-3xl);
+}
+h2 {
+  font-size: var(--t-2xl);
+}
+h3 {
+  font-size: var(--t-lg);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+p {
+  margin: 0;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--leaf-dark);
+}
+
+:focus-visible {
+  outline: 3px solid var(--leaf);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--forest);
+}
+
+/* Layout */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.band {
+  padding-block: var(--band);
+}
+
+.band-mint {
+  background: var(--mint);
+}
+
+.band-forest {
+  background: var(--forest);
+  color: var(--white);
+}
+
+.band-forest a:hover {
+  color: var(--lime);
+}
+
+.band-head {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.lede {
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--forest-soft);
+  max-width: 56ch;
+}
+
+.band-forest .lede {
+  color: #c4dccd;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--leaf);
+  background: var(--leaf);
+  color: var(--white);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover {
+  background: var(--leaf-dark);
+  border-color: var(--leaf-dark);
+  color: var(--white);
+}
+
+.band-forest .btn {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--forest);
+}
+
+.band-forest .btn:hover {
+  background: var(--white);
+  border-color: var(--white);
+  color: var(--forest);
+}
+
+.btn-quiet {
+  background: transparent;
+  border-color: var(--forest);
+  color: var(--forest);
+}
+
+.btn-quiet:hover {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--white);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.25rem;
+}
+
+.cta-note {
+  font-size: var(--t-sm);
+  color: var(--forest-soft);
+}
+
+/* Facts we don't have yet. Visible on purpose so they can't ship unnoticed. */
+.todo {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.1rem 0.5rem;
+  border: 1.5px dashed currentColor;
+  border-radius: 6px;
+  font-size: var(--t-sm);
+  opacity: 0.8;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

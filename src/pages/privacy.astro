@@ -1,0 +1,58 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+
+<Legal
+  title="Privacy"
+  description={`How ${site.name} handles the personal information you give us through this website.`}
+  lede="What we collect through this website, why, and what you can ask us to do with it. Written to be read."
+>
+  <h2>Who we are</h2>
+  <p>
+    This website is run by {site.legalEntity}, doing business as {site.name}, of {site.legalAddress}. For anything to
+    do with your information, write to <a href={`mailto:${site.email}`}>{site.email}</a> or call {site.phoneDisplay}.
+  </p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li>What you type into the contact form: your name, work email, company, the services you ticked and your message.</li>
+    <li>Emails you send us, and our replies.</li>
+    <li>Basic server logs kept by our hosting provider, such as IP address and the pages requested.</li>
+  </ul>
+  <p>We don't buy contact lists, and we don't collect anything about you from other sources.</p>
+
+  <h2>Why we collect it</h2>
+  <p>To reply to you, prepare for a call you asked for, and keep a record of our conversation.</p>
+  <p>We won't add you to a mailing list because you filled in the form.</p>
+
+  <h2>Who sees it</h2>
+  <p>
+    The {site.name} team, and the services we use to run the site, the contact form and our email. We don't sell or
+    rent your information to anyone.
+  </p>
+
+  <h2>How long we keep it</h2>
+  <p>
+    If we don't end up working together, we delete your enquiry after 12 months. If we do, the records are kept for as
+    long as the law requires for business records.
+  </p>
+
+  <h2>Cookies and analytics</h2>
+  <p>This site sets no advertising or tracking cookies.</p>
+
+  <h2>Your rights</h2>
+  <p>
+    You can ask for a copy of what we hold about you, ask us to correct it, or ask us to delete it. Email{' '}
+    <a href={`mailto:${site.email}`}>{site.email}</a> or call {site.phoneDisplay}, and we'll act on it within 30 days.
+  </p>
+
+  <h2>Information in client projects</h2>
+  <p>
+    When we work for a client, any personal data in their systems is handled under our contract with that client, and
+    this page doesn't cover it.
+  </p>
+
+  <h2>Changes</h2>
+  <p>If this page changes, the date at the top changes with it.</p>
+</Legal>

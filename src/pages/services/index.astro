@@ -1,0 +1,121 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Closing from '../../components/Closing.astro';
+import { services } from '../../data/site';
+---
+
+<Base
+  title="Services"
+  description="Digital marketing, AI consulting, AI implementation and software development from one small team. Each starts with a first project you can judge in weeks."
+>
+  <PageHero
+    title="Four services, and the same people across all of them."
+    lede="Each one starts small, with a first project you can judge in weeks. Pick the one closest to your problem."
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <ul class="rows">
+        {
+          services.map((s) => (
+            <li>
+              <a href={`/services/${s.slug}/`}>
+                <h2>{s.name}</h2>
+                <div class="about">
+                  <p class="line">{s.line}</p>
+                  <p class="who">{s.forWho}</p>
+                </div>
+                <dl>
+                  <div>
+                    <dt>A good first project</dt>
+                    <dd>{s.firstProject}</dd>
+                  </div>
+                  <div>
+                    <dt>How long</dt>
+                    <dd>{s.timeframe}</dd>
+                  </div>
+                </dl>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-mint">
+    <div class="wrap unsure">
+      <h2>Not sure which one you need?</h2>
+      <p class="lede">
+        Most problems touch more than one. Tell us what's stuck and we'll say which service fits, or whether it's a job
+        for someone else.
+      </p>
+      <a class="btn btn-quiet" href="/how-we-work/">See how a week runs</a>
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 2px solid var(--forest);
+  }
+  .rows a {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 4fr);
+    gap: 1.25rem clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
+    padding-block: 2.5rem;
+    border-top: 2px solid var(--forest);
+    text-decoration: none;
+    color: var(--forest);
+    transition: background 0.15s, padding-inline 0.15s;
+  }
+  .rows a:hover,
+  .rows a:focus-visible {
+    background: var(--mint);
+    padding-inline: 1.25rem;
+  }
+  .rows h2 {
+    font-size: var(--t-xl);
+    line-height: 1;
+  }
+  .about {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .line {
+    font-size: var(--t-md);
+    line-height: 1.45;
+  }
+  .who {
+    color: var(--forest-soft);
+  }
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  dt {
+    font-weight: 600;
+  }
+  dd {
+    margin: 0.15rem 0 0;
+    color: var(--forest-soft);
+  }
+  .unsure {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+  @media (max-width: 56rem) {
+    .rows a {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

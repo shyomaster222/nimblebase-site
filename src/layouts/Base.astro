@@ -1,0 +1,324 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import Schema from '../components/Schema.astro';
+import { site, services } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+}
+
+const { title, description, schema, noindex = false, ogImage = '/og.png', ogType = 'website' } = Astro.props;
+const latest = (await getCollection('insights', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const fullTitle = path === '/' ? title : `${title} | ${site.name}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#dff5e6" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} insights`} href="/rss.xml" />
+    {schema && <Schema data={schema} />}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="wordmark" href="/" aria-label="Nimblebase home">nimble<span>base</span></a>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <nav id="site-nav" class="site-nav" aria-label="Main">
+          <ul>
+            {
+              site.nav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <a class="btn nav-cta" href="/contact/">{site.cta}</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap foot">
+        <div class="foot-lead">
+          <a class="wordmark wordmark-light" href="/" aria-label="Nimblebase home">nimble<span>base</span></a>
+          <p>A small senior team for digital marketing, AI and software. Something live every Friday.</p>
+          <address class="nap">
+            <span class="entity">{site.legalEntity}</span>
+            <span>{site.address.street}</span>
+            <span>{site.address.city}, {site.address.region} {site.address.postal}, USA</span>
+            <a href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </address>
+        </div>
+        <nav aria-label="Services">
+          <h2>Services</h2>
+          <ul>
+            {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.name}</a></li>)}
+          </ul>
+        </nav>
+        <nav aria-label="Company">
+          <h2>Company</h2>
+          <ul>
+            {site.company.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+        <nav aria-label="Latest insights">
+          <h2>Insights</h2>
+          <ul>
+            {latest.map((post) => <li><a href={`/insights/${post.id}/`}>{post.data.title}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+      <div class="wrap legal">
+        <p class="fine">© {new Date().getFullYear()} Nimblebase</p>
+        <ul>
+          {site.legal.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+      const nav = document.getElementById('site-nav');
+      btn?.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        nav?.classList.toggle('is-open', !open);
+        btn.textContent = open ? 'Menu' : 'Close';
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 10;
+    padding: 0.6rem 1rem;
+    background: var(--forest);
+    color: var(--white);
+    border-radius: 0.5rem;
+  }
+  .skip:focus {
+    top: 1rem;
+  }
+
+  .site-header {
+    background: var(--mint);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    text-decoration: none;
+    color: var(--forest);
+  }
+  /* "base" sits on a base. */
+  .wordmark span {
+    box-shadow: inset 0 -0.2em 0 var(--leaf);
+    padding-bottom: 0.02em;
+  }
+  .wordmark:hover {
+    color: var(--forest);
+  }
+  .wordmark-light,
+  .wordmark-light:hover {
+    color: var(--white);
+  }
+  .wordmark-light span {
+    box-shadow: inset 0 -0.2em 0 var(--lime);
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+  .site-nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav li a {
+    font-weight: 500;
+    text-decoration: none;
+    padding-block: 0.4rem;
+  }
+  .site-nav li a:hover,
+  .site-nav li a[aria-current='page'] {
+    color: var(--forest);
+    box-shadow: inset 0 -0.18em 0 var(--leaf);
+  }
+  .nav-cta {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .menu-btn {
+    display: none;
+    font: 600 1rem var(--display);
+    color: var(--forest);
+    background: transparent;
+    border: 2px solid var(--forest);
+    border-radius: var(--r-pill);
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 64rem) {
+    .bar {
+      flex-wrap: wrap;
+    }
+    .menu-btn {
+      display: inline-block;
+    }
+    .site-nav {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding-block: 0.5rem 1rem;
+    }
+    .site-nav.is-open {
+      display: flex;
+    }
+    .site-nav ul {
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: var(--t-md);
+    }
+  }
+
+  .site-footer {
+    background: var(--forest);
+    color: #c4dccd;
+    padding-block: 4rem 2rem;
+  }
+  .foot {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    gap: 2.5rem;
+  }
+  .foot-lead {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    justify-items: start;
+  }
+  .foot-lead p {
+    max-width: 34ch;
+  }
+  /* Business name, address and phone: kept plain and readable, no small print. */
+  .nap {
+    font-style: normal;
+    display: grid;
+    gap: 0.25rem;
+    color: var(--white);
+    line-height: 1.5;
+  }
+  .nap .entity {
+    font-weight: 600;
+  }
+  .site-footer h2 {
+    font-size: 1rem;
+    letter-spacing: 0;
+    color: var(--lime);
+    margin-bottom: 0.9rem;
+  }
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .site-footer a {
+    color: var(--white);
+    text-decoration-color: transparent;
+  }
+  .site-footer .foot-lead a:not(.wordmark) {
+    text-decoration-color: currentColor;
+  }
+  .site-footer a:hover {
+    color: var(--lime);
+    text-decoration-color: currentColor;
+  }
+  .legal {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(196 220 205 / 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .legal ul {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .fine {
+    font-size: var(--t-sm);
+  }
+  .legal a {
+    font-size: var(--t-sm);
+  }
+  @media (max-width: 60rem) {
+    .foot {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 36rem) {
+    .foot {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

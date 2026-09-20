@@ -1,0 +1,57 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+
+<Legal
+  title="Terms"
+  description={`The terms for using the ${site.name} website.`}
+  lede="The short rules for using this website. Client work is covered by a separate written agreement."
+>
+  <h2>What these terms cover</h2>
+  <p>
+    These terms cover your use of this website, which is run by {site.legalEntity}, doing business as {site.name}, of
+    {site.legalAddress}. They don't cover work we do for clients. That is always set out in a separate agreement signed by both sides.
+  </p>
+
+  <h2>Using the site</h2>
+  <p>
+    You're welcome to read, link to and share anything here. Please don't try to break the site, scrape it in a way
+    that strains it, or use it to send us anything unlawful.
+  </p>
+
+  <h2>Our content</h2>
+  <p>
+    The words, design and code on this site belong to {site.legalEntity} unless we say otherwise. You may quote from
+    our articles with a link back to the original.
+  </p>
+
+  <h2>Articles are general information</h2>
+  <p>
+    Our insights are written in good faith from our own experience. They aren't advice about your specific situation,
+    and you shouldn't rely on them as such. If you want advice for your business, talk to us.
+  </p>
+
+  <h2>Descriptions of our services</h2>
+  <p>
+    Service descriptions, timeframes and prices on this site describe how we normally work. The terms of any actual
+    engagement are the ones in the agreement we sign with you.
+  </p>
+
+  <h2>Links to other sites</h2>
+  <p>Where we link to other websites, we aren't responsible for what's on them.</p>
+
+  <h2>Liability</h2>
+  <p>
+    This website is provided as is. To the extent the law allows, {site.legalEntity} isn't liable for any loss arising
+    from your use of the site or reliance on its content.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>These terms are governed by the law of {site.jurisdiction}.</p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about these terms go to <a href={`mailto:${site.email}`}>{site.email}</a> or {site.phoneDisplay}.
+  </p>
+</Legal>

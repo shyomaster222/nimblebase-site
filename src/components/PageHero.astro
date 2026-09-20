@@ -1,0 +1,33 @@
+---
+import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  lede: string;
+  crumbs?: Crumb[];
+}
+const { title, lede, crumbs } = Astro.props;
+---
+
+<section class="band-mint page-hero">
+  <div class="wrap inner">
+    {crumbs && <Breadcrumbs crumbs={crumbs} />}
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+  }
+  .inner {
+    display: grid;
+    gap: 1.5rem;
+  }
+  h1 {
+    font-size: var(--t-2xl);
+    max-width: 20ch;
+  }
+</style>

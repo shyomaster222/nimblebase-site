@@ -1,0 +1,318 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../data/insights';
+import Planner from '../components/Planner.astro';
+import Faq from '../components/Faq.astro';
+import Closing from '../components/Closing.astro';
+import { site, services, weekRhythm, waysToStart } from '../data/site';
+
+const posts = (await getPosts()).slice(0, 3);
+const schema = [
+  {
+    '@type': 'Organization',
+    name: site.name,
+    url: Astro.site?.href,
+    email: site.email,
+    telephone: site.phone,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: site.address.street,
+      addressLocality: site.address.city,
+      addressRegion: site.address.region,
+      postalCode: site.address.postal,
+      addressCountry: site.address.country,
+    },
+    description: 'A small senior team for digital marketing, AI consulting, AI implementation and software development.',
+  },
+  { '@type': 'WebSite', name: site.name, url: Astro.site?.href },
+];
+---
+
+<Base
+  title="Nimblebase: digital marketing, AI and software, shipped weekly"
+  description="Nimblebase is a small senior team for digital marketing, AI consulting, AI implementation and software development. We work in one-week cycles, so something goes live every Friday."
+  schema={schema}
+>
+  <section class="hero band-mint">
+    <div class="wrap hero-stack">
+      <div class="hero-top">
+        <h1>Something live every Friday.</h1>
+        <div class="hero-copy">
+          <p class="lede">
+            Nimblebase is a small senior team for digital marketing, AI and software. We work in one-week cycles, so
+            you see finished work every Friday and decide what comes next.
+          </p>
+          <div class="cta-row">
+            <a class="btn" href="/contact/">{site.cta}</a>
+            <a class="btn btn-quiet" href="/how-we-work/">See how a week runs</a>
+          </div>
+        </div>
+      </div>
+      <Planner />
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>One team does all four, so you only explain your business once.</h2>
+      </div>
+      <ul class="service-rows">
+        {
+          services.map((s) => (
+            <li>
+              <a href={`/services/${s.slug}/`}>
+                <h3>{s.name}</h3>
+                <p class="line">{s.line}</p>
+                <p class="first">
+                  <span>A good first project</span>
+                  {s.firstProject}
+                </p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-mint">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>What a week with us looks like</h2>
+        <p class="lede">Same rhythm every week, whatever we're building. You always know what's coming on Friday.</p>
+      </div>
+      <ol class="rhythm">
+        {
+          weekRhythm.map((d) => (
+            <li class:list={{ ship: d.title === 'Ship' }}>
+              <p class="day">{d.day}</p>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Proof slot: add real client results here once they exist. Nothing invented ships. -->
+
+  <section class="band band-forest" id="start">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>Three ways to start</h2>
+        <p class="lede">Start with a sprint. It's two weeks, and you'll know by the end whether we're worth keeping.</p>
+      </div>
+      <ul class="ways">
+        {
+          waysToStart.map((w) => (
+            <li>
+              <p class="length">{w.length}</p>
+              <h3>{w.name}</h3>
+              <p>{w.text}</p>
+              <p class="todo">{w.price}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="more"><a href="/pricing/">See what each one includes</a></p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap faq-grid">
+      <h2>Fair questions</h2>
+      <div>
+        <Faq />
+        <p class="more"><a href="/faq/">Read all questions</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band notes">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>Notes from the work</h2>
+      </div>
+      <PostList posts={posts} />
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 4vw, 3rem) var(--band);
+  }
+  .hero-stack {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .hero-top {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: 2rem;
+    align-items: end;
+  }
+  .hero-copy {
+    display: grid;
+    gap: 1.5rem;
+    padding-bottom: 0.75rem;
+  }
+  @media (max-width: 68rem) {
+    .hero-top {
+      grid-template-columns: 1fr;
+    }
+    .hero-copy {
+      max-width: 38rem;
+    }
+  }
+
+  /* Services: full-width rows, not cards. */
+  .service-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 2px solid var(--forest);
+  }
+  .service-rows a {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 4fr);
+    gap: 1rem clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
+    padding-block: 2rem;
+    border-top: 2px solid var(--forest);
+    text-decoration: none;
+    color: var(--forest);
+    transition: background 0.15s, padding-inline 0.15s;
+  }
+  .service-rows a:hover,
+  .service-rows a:focus-visible {
+    background: var(--mint);
+    padding-inline: 1.25rem;
+  }
+  .service-rows h3 {
+    font-size: var(--t-xl);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .service-rows .line {
+    font-size: var(--t-md);
+    line-height: 1.45;
+  }
+  .service-rows .first {
+    color: var(--forest-soft);
+  }
+  .service-rows .first span {
+    display: block;
+    font-weight: 600;
+    color: var(--forest);
+  }
+  @media (max-width: 56rem) {
+    .service-rows a {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Week rhythm: three stops on one baseline. */
+  .rhythm {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1.4fr;
+    border-top: 4px solid var(--forest);
+  }
+  .rhythm li {
+    padding: 1.5rem 1.5rem 0 0;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .rhythm li + li {
+    border-left: 2px solid var(--forest);
+    padding-left: 1.5rem;
+  }
+  .rhythm .day {
+    font-weight: 600;
+    color: var(--forest-soft);
+  }
+  .rhythm .ship {
+    background: var(--lime);
+    padding-bottom: 1.5rem;
+    border-radius: 0 0 var(--r-panel) 0;
+  }
+  .rhythm .ship .day {
+    color: var(--forest);
+  }
+  @media (max-width: 52rem) {
+    .rhythm {
+      grid-template-columns: 1fr;
+      border-top: 0;
+      border-left: 4px solid var(--forest);
+    }
+    .rhythm li,
+    .rhythm li + li {
+      border-left: 0;
+      padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+    }
+    .rhythm .ship {
+      border-radius: 0 var(--r-panel) var(--r-panel) 0;
+    }
+  }
+
+  .ways {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .ways li {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    border-top: 2px solid var(--mint);
+    padding-top: 1.25rem;
+  }
+  .ways .length {
+    color: var(--mint);
+    font-weight: 600;
+  }
+  .ways h3 {
+    font-size: var(--t-xl);
+  }
+  .ways li p {
+    color: #c4dccd;
+  }
+  @media (max-width: 52rem) {
+    .ways {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .more {
+    margin-top: 2rem;
+    font-family: var(--display);
+    font-weight: 600;
+  }
+  .notes {
+    padding-top: 0;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 56rem) {
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,297 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, services } from '../data/site';
+
+const next = [
+  'You send the form. It goes straight to the team, and no sales rep sits in between.',
+  'We reply within one working day with two or three times for a call.',
+  "On the call we work through the problem with you. If we can help, you get a one-page sprint proposal within two days. If we can't, we'll point you to someone who can.",
+];
+---
+
+<Base
+  title="Book a 20-minute call"
+  description="Tell Nimblebase what's stuck. We reply within one working day with times for a 20-minute call with someone who does the work."
+>
+  <PageHero
+    title="Book a 20-minute call"
+    lede="Tell us what's stuck. You'll talk to someone who does the work, and you'll leave the call knowing what we'd ship first."
+  />
+
+  <section class="band">
+    <div class="wrap grid">
+      <form
+        class="form"
+        data-contact
+        data-endpoint={site.formEndpoint}
+        data-email={site.email}
+        action={site.formEndpoint || `mailto:${site.email}`}
+        method="post"
+        novalidate
+      >
+        <div class="field">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required />
+          <p class="error" data-error-for="name" hidden>Add your name so we know who to ask for.</p>
+        </div>
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+          <p class="error" data-error-for="email" hidden>Enter an email address like name@company.com.</p>
+        </div>
+        <div class="field">
+          <label for="company">Company <span class="opt">(optional)</span></label>
+          <input id="company" name="company" type="text" autocomplete="organization" />
+        </div>
+        <fieldset class="field">
+          <legend>What do you need help with?</legend>
+          <div class="checks">
+            {
+              services.map((s) => (
+                <label class="check">
+                  <input type="checkbox" name="need" value={s.id} data-label={s.name} />
+                  <span>{s.name}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="message">What's stuck?</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+          <p class="error" data-error-for="message" hidden>A sentence or two is enough. Tell us what you're trying to get done.</p>
+        </div>
+        <button class="btn" type="submit">Send and get call times</button>
+        <p class="status" role="status" aria-live="polite" data-status></p>
+      </form>
+
+      <aside>
+        <h2>What happens next</h2>
+        <ol class="next">
+          {next.map((n) => <li>{n}</li>)}
+        </ol>
+        <address class="direct">
+          <p>Prefer to call or write?</p>
+          <a href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <p>
+            {site.legalEntity}<br />
+            {site.address.street}<br />
+            {site.address.city}, {site.address.region} {site.address.postal}, USA
+          </p>
+        </address>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact]');
+  if (form) {
+    // Pre-check services chosen in the planner (?need=marketing,software).
+    const need = new URLSearchParams(location.search).get('need')?.split(',') ?? [];
+    for (const box of form.querySelectorAll<HTMLInputElement>('input[name="need"]')) {
+      if (need.includes(box.value)) box.checked = true;
+    }
+
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const showError = (name: string, show: boolean) => {
+      const el = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+      const input = form.elements.namedItem(name) as HTMLInputElement;
+      if (el) el.hidden = !show;
+      input.setAttribute('aria-invalid', String(show));
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const message = String(data.get('message') ?? '').trim();
+      const bad = {
+        name: !name,
+        email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+        message: !message,
+      };
+      let first: string | undefined;
+      for (const [k, v] of Object.entries(bad)) {
+        showError(k, v);
+        if (v && !first) first = k;
+      }
+      if (first) {
+        (form.elements.namedItem(first) as HTMLElement).focus();
+        return;
+      }
+
+      const needs = [...form.querySelectorAll<HTMLInputElement>('input[name="need"]:checked')].map((b) => b.dataset.label);
+      const company = String(data.get('company') ?? '').trim();
+      const endpoint = form.dataset.endpoint;
+
+      if (endpoint) {
+        status.textContent = 'Sending…';
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ name, email, company, needs, message }),
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          location.href = '/contact/thanks/';
+        } catch {
+          status.textContent = `That didn't send. Check your connection and try again, or email ${form.dataset.email}.`;
+        }
+      } else {
+        const body = [`Name: ${name}`, company && `Company: ${company}`, needs.length && `Needs: ${needs.join(', ')}`, '', message]
+          .filter((l) => l !== false && l !== 0 && l !== undefined)
+          .join('\n');
+        location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Call request from ' + name)}&body=${encodeURIComponent(body)}`;
+        status.textContent = `Your email app should have opened with the message ready to send. If it didn't, write to ${form.dataset.email}.`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 3rem clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .form {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+  .field {
+    width: 100%;
+    display: grid;
+    gap: 0.4rem;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  label,
+  legend {
+    font-family: var(--display);
+    font-weight: 600;
+    padding: 0;
+  }
+  .opt {
+    font-weight: 400;
+    color: var(--forest-soft);
+  }
+  input[type='text'],
+  input[type='email'],
+  textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--forest);
+    background: var(--white);
+    border: 2px solid var(--forest);
+    border-radius: 0.75rem;
+    padding: 0.8rem 1rem;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-color: var(--error);
+  }
+  .error {
+    color: var(--error);
+    font-size: 0.95rem;
+  }
+  .checks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--body);
+    font-weight: 500;
+    border: 2px solid var(--mint-deep);
+    border-radius: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+  }
+  .check:has(input:checked) {
+    background: var(--mint);
+    border-color: var(--forest);
+  }
+  .check input {
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: var(--forest);
+  }
+  .status:empty {
+    display: none;
+  }
+  .status {
+    background: var(--lime);
+    border-radius: 0.75rem;
+    padding: 0.9rem 1.1rem;
+  }
+
+  aside {
+    background: var(--mint);
+    border-radius: var(--r-panel);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  aside h2 {
+    font-size: var(--t-lg);
+  }
+  .next {
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .next li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+  }
+  .next li::before {
+    content: counter(step);
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--white);
+    font: 600 0.95rem var(--display);
+  }
+  .direct {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1.5px solid var(--mint-deep);
+    font-style: normal;
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+  }
+  .direct p:first-child {
+    font-weight: 600;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .checks {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

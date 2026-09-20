@@ -1,0 +1,221 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Closing from '../components/Closing.astro';
+import { site } from '../data/site';
+
+// Replace with the real team before launch.
+const team = [
+  { name: '[Founder name is added before launch]', role: '[Role]', bio: '[Two sentences on what this person has built and who for.]' },
+  { name: '[Team member name is added before launch]', role: '[Role]', bio: '[Two sentences on what this person has built and who for.]' },
+  { name: '[Team member name is added before launch]', role: '[Role]', bio: '[Two sentences on what this person has built and who for.]' },
+];
+
+const principles = [
+  { h: 'Show the work every week.', t: 'A Friday with nothing to show is a problem we raise ourselves, before you have to.' },
+  { h: 'Say the awkward thing early.', t: "If an idea won't pay back, or we're the wrong team for it, you hear that in the first conversation." },
+  { h: 'Build it in your accounts.', t: 'You should be able to stop working with us tomorrow and lose nothing.' },
+  { h: 'Write it down.', t: 'Scope, decisions and handover notes are written in plain words, so the work survives a change of people on either side.' },
+];
+---
+
+<Base
+  title="About"
+  description="Nimblebase is a deliberately small team of senior marketers, AI engineers and developers. Here's why we stay small and who you'll work with."
+>
+  <PageHero
+    title="Small on purpose."
+    lede="Nimblebase is a handful of senior people who do the work themselves. We stay small so the person you meet on the first call is still the person you're working with in month six."
+  />
+
+  <section class="band">
+    <div class="wrap story">
+      <h2>Why we work this way</h2>
+      <div class="prose">
+        <p>
+          We don't put a handoff between you and the work. The marketer, the AI engineer and the developer sit in the
+          same Monday call with you, and whoever builds the thing is the one who explains it on Friday.
+        </p>
+        <p>
+          Every handoff is a place where your idea gets summarised and loses something. With none in the way, what you
+          said on Monday is what gets built.
+        </p>
+        <p>
+          Staying small also means we cap how many companies we take on. When the team is full, we'll say so and give
+          you a date.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band principles">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>What we hold ourselves to</h2>
+      </div>
+      <ul class="rules">
+        {
+          principles.map((r) => (
+            <li>
+              <h3>{r.h}</h3>
+              <p>{r.t}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band-mint">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>Who you'll work with</h2>
+      </div>
+      <ul class="team">
+        {
+          team.map((m) => (
+            <li>
+              <div class="photo" aria-hidden="true" />
+              <h3 class="todo">{m.name}</h3>
+              <p class="todo">{m.role}</p>
+              <p class="todo">{m.bio}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap reach">
+      <h2>How to reach us</h2>
+      <dl>
+        <div>
+          <dt>Email</dt>
+          <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd><a href={`tel:${site.phone}`}>{site.phoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>Address</dt>
+          <dd>
+            {site.legalEntity}, {site.address.street}, {site.address.city}, {site.address.region} {site.address.postal}, USA
+          </dd>
+        </div>
+        <div>
+          <dt>Reply time</dt>
+          <dd>Within one working day.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <Closing />
+</Base>
+
+<style>
+  .story {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .prose {
+    display: grid;
+    gap: 1.25rem;
+    font-size: var(--t-md);
+    line-height: 1.55;
+  }
+  .principles {
+    padding-top: 0;
+  }
+  .rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(2rem, 6vw, 5rem);
+  }
+  .rules li {
+    border-top: 2px solid var(--forest);
+    padding-block: 1.5rem 2.5rem;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .rules p {
+    color: var(--forest-soft);
+  }
+  .reach {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .reach dl {
+    margin: 0;
+    border-bottom: 2px solid var(--forest);
+  }
+  .reach dl div {
+    display: grid;
+    grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+    gap: 1rem;
+    border-top: 2px solid var(--forest);
+    padding-block: 1.1rem;
+  }
+  .reach dt {
+    font-weight: 600;
+  }
+  .reach dd {
+    margin: 0;
+    justify-self: start;
+    min-width: 0;
+  }
+  @media (max-width: 36rem) {
+    .reach dl div {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+
+  .team {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .team li {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+    align-content: start;
+  }
+  .photo {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background: var(--white);
+    border-radius: var(--r-panel);
+    margin-bottom: 0.5rem;
+  }
+  .team h3.todo {
+    font-size: var(--t-md);
+  }
+  @media (max-width: 52rem) {
+    .rules,
+    .reach {
+      grid-template-columns: 1fr;
+    }
+    .story,
+    .team {
+      grid-template-columns: 1fr;
+    }
+    .photo {
+      aspect-ratio: 3 / 2;
+    }
+  }
+</style>
